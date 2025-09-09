@@ -1,12 +1,4 @@
-# timetemplate.S
-# Written 2015 by F Lundevall
-# Ported 2024/06 by W Szczerek (from MIPS to RISC-V)
-# Copyright abandonded - this file is in the public domain.
 
-#############################################################
-# Choose the macro syntax for RARS or DTEK-V board.         #
-# The syntax for RARS is probably due to its MIPS heritage. #
-#############################################################
 ###################
 # Macros for RARS #
 ###################
