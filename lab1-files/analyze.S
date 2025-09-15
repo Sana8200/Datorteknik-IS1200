@@ -6,14 +6,14 @@
 	.text
 	.globl analyze
 analyze:
-	li	s0, 0x35
+	li	s0, 0x30
 loop:
 	mv	a0, s0				# copy from s0 to a0
 	
 	li	a7, 11				# environment call with a7 = 11 will print out
 	ecall					# one byte from a0 to the Run I/O window
 
-	addi	s0, s0, 0x03	# what happens if the constant is changed?
+	addi	s0, s0, 0x04	# what happens if the constant is changed?
 	
 	li	t0, 0x5A	
 	ble	s0, t0, loop
