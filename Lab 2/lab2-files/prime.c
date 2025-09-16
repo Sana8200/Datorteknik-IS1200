@@ -22,7 +22,7 @@ int is_prime(int n){
     return 0;          // Other even numbers larger than 2 are not prime. 
   }
  
-  for (int i = 1; i < n; i += 2) {       // Checking odd numbers larger than 2 
+  for (int i = 3; i < n; i += 2) {       // Checking odd numbers larger than 2 
      if (n % i == 0) {                   // If n is divisible by i, it is not prime.
       return 0;
      }
