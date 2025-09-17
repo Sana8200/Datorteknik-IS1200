@@ -9,3 +9,9 @@ build/
 
 # Ignore .dSYM debug files 
 *.dSYM
+
+# Ignore object and executable files
+*.o
+*.out
+*.exe
+
