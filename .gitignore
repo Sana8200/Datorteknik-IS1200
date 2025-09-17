@@ -7,3 +7,5 @@
 # You can also ignore entire folders
 build/
 
+# Ignore .dSYM debug files 
+*.dSYM
