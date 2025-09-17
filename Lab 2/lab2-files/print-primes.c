@@ -11,8 +11,6 @@
 
 #define COLUMNS 6
 
-void print_number(int n);  // Function prototype for print_number
-
 int is_prime(int n){     
   // Returns 1 if n is prime, returns 0 if n is not prime.
 
