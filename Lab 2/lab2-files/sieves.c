@@ -23,17 +23,20 @@ void print_sieves(int maxPrime){
     // Sieve of Eratosthenes algorithm to find all prime numbers up to maxPrime
     // maxPrime states the max prime number values to be found
 
-    int numbers[maxPrime + 1];               // local array represinting numbers from 0 to maxPrime
+    char numbers[maxPrime + 1];                // local array represinting numbers from 0 to maxPrime
+                                               // Using char to save memory, as we only need to store 0 or 
+                                               // (n + 1) bytes of memory (not exceeding at most n + 8 bytes)
+                                               // If we use int, it takes (4 * n) bytes of memory
     
-    for(int i = 0; i <= maxPrime; i++){
-        numbers[i] = 1;                       // settin all numbers as 1 that shows they are prime
+    for(int i = 0; i <= maxPrime; i++){       // Initializing the array, first step of the algorithm
+        numbers[i] = 1;                       // setting all numbers as 1, assuming all numbers are prime
     }
 
-    // Sieve of Eratosthenes algorithm
-    for(int p = 2; p * p <= maxPrime; p++){
-        if(numbers[p] == 1){                 // If numbers[p] is still marked as prime
+
+    for(int p = 2; p * p <= maxPrime; p++){   // Starting from the first prime number 2, second step of the algorithm  
+        if(numbers[p] == 1){                  // If numbers[p] is still marked as prime
             for( int multiples = p * p; multiples <= maxPrime; multiples += p){
-                numbers[multiples] = 0;      // Marking all multiples of p as non-prime, setting them to 0 
+                numbers[multiples] = 0;       // Marking all multiples of p as non-prime, setting them to 0, crossing them out 
             }
         }
     }
