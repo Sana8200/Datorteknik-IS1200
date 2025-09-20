@@ -28,10 +28,9 @@ void print_sieves(int maxPrime){
     // This is especially useful for large values of maxPrime, where stack memory might be insufficient
     // Dynamic memory allocation allows us to use heap memory, which is generally larger than stack memory
     
-    numbers = (char*) malloc((maxPrime + 1));            // Dynamically allocate memory for the array  
-                                                         // (maxPrime + 1) to include the number maxPrime itself
-    // numbers = (char*) malloc((maxPrime + 1) * sizeof(char));   
-    // This is another way to allocate memory, multiplying by sizeof(char), it's optional here as sizeof(char) is always 1
+    numbers = (char*) malloc((maxPrime + 1) * sizeof(char));            // Dynamically allocate memory for the array  
+                                                                        // (maxPrime + 1) to include the number maxPrime itself
+    // Different system differs in the size of char, int, etc so we need to include sizeof to make it portable across systems
 
 
     /*
