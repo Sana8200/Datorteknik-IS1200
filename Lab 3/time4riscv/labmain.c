@@ -25,8 +25,42 @@ void handle_interrupt(unsigned cause)
 void labinit(void)
 {}
 
+
+void set_leds(int led_mask){
+  volatile int *leds = (int *)0x04000000;
+  *leds = led_mask;
+
+}
+
+void delay_seconds(int ms){
+  volatile int *timer = (int *)0x04000008;
+  *timer = ms*1000; // Set the timer for ms milliseconds (assuming 1 tick = 1 microsecond)
+  while (*timer > 0); // Wait until the timer counts down to zero
+}
+
+
+
+
+
 /* Your code goes into main as well as any needed functions. */
 int main() {
+
+  int led_value = 0;
+  
+
+  while (led_value <= 0xF) { // 0xF is hexadecimal for 15
+        
+        // Update the physical LEDs with the current counter value.
+        set_leds(led_value);
+        
+        // Wait for approximately one second.
+        delay_seconds(50000);
+        
+        // Increment the counter for the next iteration.
+        led_value++;
+    }
+
+
   // Call labinit()
   labinit();
 

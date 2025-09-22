@@ -78,9 +78,6 @@ void mean_sieves(int maxPrime){
     }
     printf("\n");
 
-
-      
-
     // Calculating the mean of all prime numbers found
     // Summing all the numbers and then divide that by the count of prime numbers founf 
 
@@ -105,7 +102,6 @@ void mean_sieves(int maxPrime){
     }
     
     free(numbers);  
-
 }
 
 

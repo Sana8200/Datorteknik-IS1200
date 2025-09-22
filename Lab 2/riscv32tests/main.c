@@ -12,6 +12,8 @@ extern void print_hex32 ( unsigned int x);
 
 void handle_interrupt(void) {}
 
+
+// Takes a string and a pointer. It print the string, the memoery address the pointer holds, and the 4 byte integer value at that address. 
 void print_word (const char *str, void *ptr)
 {
   print(str);
@@ -22,6 +24,9 @@ void print_word (const char *str, void *ptr)
   print("\n");
 }
 
+
+
+// Does the same as print_word, but for a single byte (char).
 void print_byte (const char *str, char *ptr)
 {
   print(str);
@@ -33,37 +38,48 @@ void print_byte (const char *str, char *ptr)
 }
 
 
+// Global variables, accessible from all functions, they go to the data segment. 
+int gv;      /* Uninitiallized, goes to .bss section */
+int in = 3;  /* Initialized, goes to .data section */
 
-int gv; /* Global variable. */
-int in = 3; /* Global variable, initialized to 3. */
 
+
+// A function that takes one integer arument and returns nothing, it does some operations with the argument and global values. 
 void fun(int param)
 {
-  param++;
+  // Creating a local variable of param, it goes to the stack. Pass by value
+  param++;    /* Incrementing the local copy only, the original value in main is unaffected.*/
   print_word( "AF1: param", &param );
-  gv = param; /* Change the value of a global variable. */
+  gv = param;    /* Change the value of a global variable, 
+                 /* A side effect of the function. */
 }
 
-/* This is the main function */
+
+
+
+// The main function, Execution flow
 int main()
 {
   /* Local variables. */
-  int m;
+  int m;    
   int * p; /* Declare p as pointer, so that p can hold an address. */
-  char cs[ 9 ] = "Bonjour!";
+  char cs[ 9 ] = "Bonjour!";   /* An array of 9 characters, 8 characters for the string plus null terminator */
   char * cp = cs; /* Declare cp as pointer, initialise cp to point to cs */
                                                                                                                                                                                              
   /* Do some calculation. */                                                                                                                                                                
   gv = 4;                                                                                                                                                                                    
   m = gv + in;
   
-  /* Check the addresses and values of some variables and stuff */                                                                                                                           
-  print_word( "AM1: gv", &gv );                                                                                                                                                                
-  print_word( "AM2: in", &in );
-  print_word( "AM3: fun", &fun );
-  print_word( "AM4: main", &main );
+  /* Check the addresses and values of some variables and stuff */    
+  // The & operator gives the address of a variable.                                                                                                                       
+  print_word( "AM1: gv", &gv );        // .bss section                                                                                                                                                        
+  print_word( "AM2: in", &in );        // .data section
+  print_word( "AM3: fun", &fun );      // .text section (code)
+  print_word( "AM4: main", &main );    // .text section (code)
 
-  p = &m;
+  // Playing with pointers 
+
+  p = &m;     /* Let p point to m, i.e., assign the address of m to p */
 
   /* Check p and m */
   print_word( "AM5: p", &p );
@@ -71,7 +87,7 @@ int main()
 
   /* Change *p */
 
-  *p = *p + 1;
+  *p = *p + 1;       /* Derefrencing */
 
   /* Check p and m */
   print_word( "AM7: p", &p );
