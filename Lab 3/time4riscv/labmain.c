@@ -14,6 +14,7 @@ extern void tick(int*);
 extern void delay(int);
 extern int nextprime( int );
 
+
 // Calling the functions writting Lab 3 part c 
 extern void set_leds(int led_mask);
 extern void set_display(int display_number, int value);
@@ -39,54 +40,33 @@ void labinit(void)
 /* Your code goes into main as well as any needed functions. */
 int main() {
 
-
-/*
-  // Lab 3 part e 
-  set_display(0, 5);
-
-
-  // Lab 3 part d, this will show that how many seconds has elapsed since the program started 
-  // The program stpes when the first 4 LEDs are on (4 leds = 1111 = 15 = 0xF), 
-  // The program runs for 16 seconds (0-15)
-  for(int led_counter = 0 ; led_counter <= 15 ; led_counter++){
-
-    time2string( textstring, mytime ); // Converts mytime to string
-    display_string( textstring ); //Print out the string 'textstring'
-
-
-    set_leds(led_counter);
-
-    
-    delay(3000);          // Delays 1 sec (adjust this value)
-    tick( &mytime );     // Ticks the clock once
-
-  }
-*/
-
-
   // Call labinit()
   labinit();
 
-
-
   // Enter a forever loop
-  while (1) {
+   while (1) {
     
-    // Lab 3 part f and g 
-
+    // Get the state of all inputs
     int switch_state = get_sw();
     int push_btn_state = get_btn();
 
-    int led_value = switch_state;
 
-    if(push_btn_state == 1){
-      
+    int led_value = switch_state;
+    
+    // If the button is pressed, use a bitwise OR to turn on the 9th LED without affecting the other LEDS
+    // If we do the OR operator with for exmaple 0x300, LEDs 9 and 8 will turn on when pushing the button
+
+    if (push_btn_state == 1){
       led_value = led_value | 0x200;
-    } 
+    }
 
     set_leds(led_value);
-    set_display(0, switch_state);
+ 
 
+    // Setting the display to show the value of the first 4 switches (0-15)
+    int display_value = switch_state & 0xF;
+    
+    set_display(0, display_value);
   }
 }
 
