@@ -54,7 +54,7 @@ timetemplate:
 	jal     display_string
 	
 	# wait a little
-	li	a0, 1000		# ms, 1000, or 3000, this is for getting the delay, a0 which will used in delay subroutine 
+	li	a0, 3000		# ms, 1000, or 3000, this is for getting the delay, a0 which will used in delay subroutine 
 	jal	delay
 	
 	# call tick
