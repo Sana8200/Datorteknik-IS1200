@@ -17,6 +17,7 @@ extern int nextprime( int );
 // Calling the functions writting Lab 3 part c 
 extern void set_leds(int led_mask);
 extern void set_display(int display_number, int value);
+extern int get_sw(void);
 
 
 int mytime = 0x5957;
@@ -37,6 +38,8 @@ void labinit(void)
 /* Your code goes into main as well as any needed functions. */
 int main() {
 
+
+/*
   // Lab 3 part e 
   set_display(0, 5);
 
@@ -57,6 +60,7 @@ int main() {
     tick( &mytime );     // Ticks the clock once
 
   }
+*/
 
 
   // Call labinit()
@@ -67,7 +71,14 @@ int main() {
   // Enter a forever loop
   while (1) {
     
-    
+    // Lab 3 part f 
+
+    int switch_state = get_sw();
+
+    set_leds(switch_state);  
+
+    set_display(0, switch_state);
+
   }
 }
 

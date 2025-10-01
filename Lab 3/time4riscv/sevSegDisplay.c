@@ -33,7 +33,8 @@ void set_display( int display_number, int value){
     if(value >= 0 && value <= 9){
         bit_pattern = sev_seg_map[value];
     } else {
-        bit_pattern = 0x7F;    // Turning off all the segments for invalid numbers 
+        // bit_pattern = 0x7F;    // Turning off all the segments for invalid numbers 
+        bit_pattern = sev_seg_map[0];            // for invalid numbers bigger than 9 or negative numbers show 0 on the display 
     }
 
 
