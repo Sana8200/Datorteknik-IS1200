@@ -16,13 +16,24 @@ int get_sw(void){
 
     int switch_value = *switch_pointer;   // Deferencing, and just getting the value at the switch address and putting it into the new variable switch_value
 
-    // Creating a mask (masking operation), isolating the 10 least significant bits 
-    // 0x3FF = 0011 1111 1111
-    int mask = 0x3FF;
 
     // Applying the mask using & bitwise AND operation, all bits other than 10 least significant bits will be 0 
-    int result = switch_value & mask;
+     // 0x3FF = 0011 1111 1111
+    int result = switch_value & 0x3FF;
 
     return result; 
 }
 
+
+
+/* Calling the function 
+
+   while (1) {
+
+     int switch_state = get_sw();
+
+     set_leds(switch_state);  
+
+     set_display(0, switch_state);
+
+*/

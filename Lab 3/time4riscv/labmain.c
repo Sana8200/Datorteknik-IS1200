@@ -18,6 +18,7 @@ extern int nextprime( int );
 extern void set_leds(int led_mask);
 extern void set_display(int display_number, int value);
 extern int get_sw(void);
+extern int get_btn(void);
 
 
 int mytime = 0x5957;
@@ -71,12 +72,19 @@ int main() {
   // Enter a forever loop
   while (1) {
     
-    // Lab 3 part f 
+    // Lab 3 part f and g 
 
     int switch_state = get_sw();
+    int push_btn_state = get_btn();
 
-    set_leds(switch_state);  
+    int led_value = switch_state;
 
+    if(push_btn_state == 1){
+      
+      led_value = led_value | 0x200;
+    } 
+
+    set_leds(led_value);
     set_display(0, switch_state);
 
   }
