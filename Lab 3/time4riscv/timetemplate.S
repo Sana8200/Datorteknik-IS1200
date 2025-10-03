@@ -54,7 +54,7 @@ timetemplate:
 	jal     display_string
 	
 	# wait a little
-	li	a0, 3000		# ms, 1000, or 3000, this is for getting the delay, a0 which will used in delay subroutine 
+	li	a0, 4000		# ms, 1000, or 3000, this is for getting the delay, a0 which will used in delay subroutine 
 	jal	delay
 	
 	# call tick
@@ -209,7 +209,7 @@ while_loop:                      # outer loop runs once for each millisecond (a0
                               
 ################## 1 ms timer                                                                                              
     # for loop start (i = 0 ; i < 4711 ; i = i + 1)                         
-    li t1, 1500                  # constant upper limit for i in the inner for loop     t1 = 4711
+    li t1, 3000                  # constant upper limit for i in the inner for loop     t1 = 4711
     li t0, 0                     #  i, t0 = 0 , reseting the inner loop counter i to 0 
     
 for_loop:                        # inner loop is the for loop's body which counts up to the limit to waste time and make delay. 
