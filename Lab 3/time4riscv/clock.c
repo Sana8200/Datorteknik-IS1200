@@ -62,37 +62,42 @@ void clock(void){
   // Main infinite loop for the clock.
   while (1) {
     int switch_state = get_sw();
+    int led_state = 0;
 
     // --- Exit Condition ---
-    if (( switch_state >> EXIT_SWITCH_BIT) & 0x1) {
+    if (( switch_state >> EXIT_SWITCH_BIT) & 0x1) {   
+      set_leds(0x80);      // Turning LED7 on, showing the end of program 
       break;    // Exit the while loop if SW7 is high (=1)
-    }
+    } 
 
     // --- Pause/Resume Logic ---
-    int is_paused = ( switch_state >> PAUSE_SWITCH_BIT) & 0x1;     //Isolating the state of SW6, bit 6. if it's 1, the clock is pasued 
+    int is_paused = ( switch_state >> PAUSE_SWITCH_BIT) & 0x1;     // Isolating the state of SW6, bit 6. if it's 1, the clock is pasued 
+    if(is_paused){
+      led_state |= 0x40;    // LED6 turns on showing that the clock is pasued 
+    } 
 
 
+    // --- Time Keeping ---
     // The timekeeping part runs only if the clock is not paused. (sw6 = 0)
     if(!is_paused){
-      // --- Time Keeping ---
-      // Incrementing the time every second.
-      // delay(1000);  // Wait for approximately one second.
-      tick_counter++;
+      // delay(1000);  // Wait for approximately one second, this make delays in the program for switch and button handling 
+      tick_counter++;  // Incrementing the loop counter by 1 
 
-      if(tick_counter >= TICKS_PER_SECOND){
+      if(tick_counter >= TICKS_PER_SECOND){     // If tick_counter >= 100, one full second of real time has passed 
         tick_counter = 0;
         seconds++;
 
-        if (seconds >= 60) {
+        // rollover logic for a clock 
+        if (seconds >= 60) {   // If seconds reached 60, reset seconds to 0 and increment minutes by one 
         seconds = 0;
         minutes++;
         }
-        if (minutes >= 60) {
+        if (minutes >= 60) {  // If minutes reached 60, reset minutes to 0 and increment hours by one
           minutes = 0;
           hours++;
         }
-        if (hours >= 24) {
-          hours = 0; // Clock resets after 24 hours.
+        if (hours >= 24) {   // If hours reached 24, reset hours to 0, clock resets after 24 hours 
+          hours = 0; 
         }
       }
     }
@@ -101,35 +106,39 @@ void clock(void){
     // --- Button and Switch Input Handling ---
     // Checking if a button is pressed to modify the time.
     if (get_btn() == 1) {
-      // set_leds(0x200);  // If the push button pressed LED9 will be turned on 
+      set_leds(led_state | 0x200);  // If the push button pressed LED9 will be turned on, it will show the current state and button press together 
+      // delay(150);
 
       int switch_state = get_sw();
 
-      // Isolate the value from the 6 right-most switches (SW0-SW5).
+      // Isolate the input value we want to set from the 6 right-most switches (SW0-SW5).
       int value_to_set = switch_state & 0x3F;
 
       // Isolate the selector from the 2 left-most switches (SW9 and SW8).
-      // 01 = seconds, 10 = minutes, 11 = hours.
+      // 01 = 1 = seconds, 10 = 2 = minutes, 11 = 3 = hours
       int selector = (switch_state >> 8) & 0x3;
 
-      if (selector == 1 && value_to_set < 60) {       // Modify seconds
+      if (selector == 1 && value_to_set < 60) {        // Update seconds
         seconds = value_to_set;
-
-      } else if (selector == 2 && value_to_set < 60) { // Modify minutes
+      } else if (selector == 2 && value_to_set < 60) { // Update minutes
         minutes = value_to_set;
-
-      } else if (selector == 3 && value_to_set < 24) { // Modify hours
+      } else if (selector == 3 && value_to_set < 24) { // Update hours
         hours = value_to_set;
       }
   
+      tick_counter = 0;   // Reset the tick counter to start again
+      /*
       // Update the display immediately after setting a new time.
       set_timer_display(hours, minutes, seconds);
 
       // A small delay 
-      delay(500);
+      // delay(500);
       set_leds(0);    // Turning of the feedback LED 
+      */
     }
 
+    // Final output updates 
+    set_leds(led_state);
     set_timer_display(hours, minutes, seconds);
     delay(50);
   }
@@ -137,7 +146,6 @@ void clock(void){
   // --- Program End ---
   // This part runs only after the loop is broken by SW7.
   // Clear displays and LEDs to indicate the program has ended.
-  display_string("Program End.");
+  display_string("Program Ended.");
   set_timer_display(0,0,0);
-  set_leds(0);
 }
