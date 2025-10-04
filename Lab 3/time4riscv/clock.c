@@ -1,8 +1,9 @@
 
 #include "hardware.h"
 #include "lib.h"
+#include "clock.h"
 
-/* ============================== Lab 3 part h ================================ */
+/* ============================== Lab 3 part h Assignment 1 ================================ */
 
 
 /*
@@ -36,10 +37,17 @@ void set_timer_display(int hours, int minutes, int seconds) {
 #define PAUSE_SWITCH_BIT 6    // SW6 is used to Pause/Resum the program 
 #define EXIT_SWITCH_BIT  7    // SW7 is used to exit the program 
 
+
+/*
 // This value determines how many loop cycles make up one second.
 // If each loop has a delay(50), and delay(5000) was one second,
 // then 100 ticks (100 * 50) create the one-second interval.
 #define TICKS_PER_SECOND 100
+*/
+// Using tickcounter, is more close to the real time, and doesn't create delay for switches, but delay(5000) makes the sw6 
+// To stop in the next loop beacasue of the dela(5000) loops one round also makes the push button to work with delay 
+
+
 
 /*
  * clock_timer
@@ -52,7 +60,7 @@ void clock(void){
   int minutes = 0;
   int seconds = 0;
 
-  int tick_counter = 0;    // This will count the fast loop cycles from 0 to 100
+  // int tick_counter = 0;    // This will count the fast loop cycles from 0 to 100
 
   // Clearing LEDs and displays before starting for ensuring 
   set_leds(0);
@@ -80,11 +88,12 @@ void clock(void){
     // --- Time Keeping ---
     // The timekeeping part runs only if the clock is not paused. (sw6 = 0)
     if(!is_paused){
-      // delay(1000);  // Wait for approximately one second, this make delays in the program for switch and button handling 
-      tick_counter++;  // Incrementing the loop counter by 1 
 
-      if(tick_counter >= TICKS_PER_SECOND){     // If tick_counter >= 100, one full second of real time has passed 
-        tick_counter = 0;
+      //tick_counter++;  // Incrementing the loop counter by 1 
+
+      //if(tick_counter >= TICKS_PER_SECOND){     // If tick_counter >= 100, one full second of real time has passed 
+        //tick_counter = 0;
+        delay(5000);   // delay for the second incrementing, this make delays in the program for switch and button handling 
         seconds++;
 
         // rollover logic for a clock 
@@ -100,14 +109,14 @@ void clock(void){
           hours = 0; 
         }
       }
-    }
+    
 
 
     // --- Button and Switch Input Handling ---
     // Checking if a button is pressed to modify the time.
     if (get_btn() == 1) {
-      set_leds(led_state | 0x200);  // If the push button pressed LED9 will be turned on, it will show the current state and button press together 
-      // delay(150);
+      // set_leds(led_state | 0x200);  // If the push button pressed LED9 will be turned on, it will show the current state and button press together 
+      delay(150);  // Short delay for feedback and debouncing 
 
       int switch_state = get_sw();
 
@@ -126,26 +135,22 @@ void clock(void){
         hours = value_to_set;
       }
   
-      tick_counter = 0;   // Reset the tick counter to start again
-      /*
-      // Update the display immediately after setting a new time.
-      set_timer_display(hours, minutes, seconds);
-
-      // A small delay 
-      // delay(500);
-      set_leds(0);    // Turning of the feedback LED 
-      */
+      
+      // tick_counter = 0;   // Reset the tick counter to start again
+      
     }
-
+    
     // Final output updates 
     set_leds(led_state);
     set_timer_display(hours, minutes, seconds);
-    delay(50);
-  }
+
+  } // End of while loop 
+
 
   // --- Program End ---
   // This part runs only after the loop is broken by SW7.
   // Clear displays and LEDs to indicate the program has ended.
   display_string("Program Ended.");
   set_timer_display(0,0,0);
+
 }
