@@ -1,151 +1,114 @@
 
 #include "hardware.h"
 #include "lib.h"
+#include "timer.h"
 
-/* ============================== Lab 3 part h ================================ */
 
-
-/*
- * set_timer_displays
- * This function takes hours, minutes, and seconds and displays them across the six 7-segment displays.
- * Displays 5 & 4: Hours
- * Displays 3 & 2: Minutes
- * Displays 1 & 0: Seconds
- */
+// setting displays, 5, 4, 3, 2, 1, 0  : hourse, hours, minutes, minutes, seconds, seconds
 void set_timer_display(int hours, int minutes, int seconds) {
-    // Display seconds (rightmost two displays: 0 and 1)
+
     set_display(0, seconds % 10);        
     set_display(1, (seconds / 10) % 10); 
 
-    // Display minutes (middle two displays: 2 and 3)
     set_display(2, minutes % 10);        
     set_display(3, (minutes / 10) % 10); 
 
-    // Display hours (leftmost two displays: 4 and 5)
     set_display(4, hours % 10);          
-    set_display(5, (hours / 10) % 10);   
-    
+    set_display(5, (hours / 10) % 10);     
 }
-/*
-  To display a number like 36, we isolate each digit. We get the ones digit (6) using the modulo operator (36 % 10), 
-  and the tens digit (3) using integer division (36 / 10). Each digit is then sent to its respective display.
-  % operator for the tens digit is just for safety, ensuring that we just send one digit to the displayers 
-*/
-
 
 #define PAUSE_SWITCH_BIT 6    // SW6 is used to Pause/Resum the program 
 #define EXIT_SWITCH_BIT  7    // SW7 is used to exit the program 
 
-// This value determines how many loop cycles make up one second.
-// If each loop has a delay(50), and delay(5000) was one second,
-// then 100 ticks (100 * 50) create the one-second interval.
-#define TICKS_PER_SECOND 100
-
 /*
  * clock_timer
- * Runs the primary clock loop. It handles timekeeping, display updates, and user input for setting the time or exiting.
+ * Runs the primary clock loop using the hardware timer.
+ * We replaced all delay() calls with a non-blocking check of the timer's hardware flag, makeing the program efficient and responsive. 
  */
-void clock(void){
-    
-  // Initialize time variables
+void clock_timer(void){
+
+  // Initializing time variables
   int hours = 0;
   int minutes = 0;
   int seconds = 0;
 
-  int tick_counter = 0;    // This will count the fast loop cycles from 0 to 100
-
-  // Clearing LEDs and displays before starting for ensuring 
-  set_leds(0);
+  // Clearning the display before starting 
   set_timer_display(0, 0, 0);
 
-
-  // Main infinite loop for the clock.
+  
+  // Main infinite loop 
   while (1) {
-    int switch_state = get_sw();
     int led_state = 0;
+    int switch_state = get_sw();
 
-    // --- Exit Condition ---
+
+     // --- Exit Condition ---
     if (( switch_state >> EXIT_SWITCH_BIT) & 0x1) {   
       set_leds(0x80);      // Turning LED7 on, showing the end of program 
       break;    // Exit the while loop if SW7 is high (=1)
-    } 
+    }
+ 
 
-    // --- Pause/Resume Logic ---
-    int is_paused = ( switch_state >> PAUSE_SWITCH_BIT) & 0x1;     // Isolating the state of SW6, bit 6. if it's 1, the clock is pasued 
+    int is_paused = (switch_state >> PAUSE_SWITCH_BIT) & 0x01;
     if(is_paused){
       led_state |= 0x40;    // LED6 turns on showing that the clock is pasued 
     } 
 
-
-    // --- Time Keeping ---
-    // The timekeeping part runs only if the clock is not paused. (sw6 = 0)
+    
     if(!is_paused){
-      // delay(1000);  // Wait for approximately one second, this make delays in the program for switch and button handling 
-      tick_counter++;  // Incrementing the loop counter by 1 
+      // --- Check for Timer Timeout Event ---
+      // The loop constantly polls the status register
+      // This condition is only true for very brief moment every 100ms 
+      if (*TIMER_STATUS & TIMER_STATUS_TO) { 
 
-      if(tick_counter >= TICKS_PER_SECOND){     // If tick_counter >= 100, one full second of real time has passed 
-        tick_counter = 0;
+        // A 100ms timeout event has occurred.
+        // Resetting the timeout flag. 
+        *TIMER_STATUS = TIMER_STATUS_TO;
+
+        // Increment the time on EVERY timeout event.
+        // This will make the clock appear to run 10 times faster 
         seconds++;
-
-        // rollover logic for a clock 
-        if (seconds >= 60) {   // If seconds reached 60, reset seconds to 0 and increment minutes by one 
-        seconds = 0;
-        minutes++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
         }
-        if (minutes >= 60) {  // If minutes reached 60, reset minutes to 0 and increment hours by one
-          minutes = 0;
-          hours++;
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
         }
-        if (hours >= 24) {   // If hours reached 24, reset hours to 0, clock resets after 24 hours 
-          hours = 0; 
+        if (hours >= 24) {
+            hours = 0;
         }
+            
+        // The display will be updated 10 times per second.
+        set_timer_display(hours, minutes, seconds);
       }
     }
-
-
-    // --- Button and Switch Input Handling ---
-    // Checking if a button is pressed to modify the time.
-    if (get_btn() == 1) {
-      set_leds(led_state | 0x200);  // If the push button pressed LED9 will be turned on, it will show the current state and button press together 
-      // delay(150);
-
-      int switch_state = get_sw();
-
-      // Isolate the input value we want to set from the 6 right-most switches (SW0-SW5).
-      int value_to_set = switch_state & 0x3F;
-
-      // Isolate the selector from the 2 left-most switches (SW9 and SW8).
-      // 01 = 1 = seconds, 10 = 2 = minutes, 11 = 3 = hours
-      int selector = (switch_state >> 8) & 0x3;
-
-      if (selector == 1 && value_to_set < 60) {        // Update seconds
-        seconds = value_to_set;
-      } else if (selector == 2 && value_to_set < 60) { // Update minutes
-        minutes = value_to_set;
-      } else if (selector == 3 && value_to_set < 24) { // Update hours
-        hours = value_to_set;
-      }
+    
   
-      tick_counter = 0;   // Reset the tick counter to start again
-      /*
-      // Update the display immediately after setting a new time.
-      set_timer_display(hours, minutes, seconds);
-
-      // A small delay 
-      // delay(500);
-      set_leds(0);    // Turning of the feedback LED 
-      */
-    }
-
-    // Final output updates 
     set_leds(led_state);
-    set_timer_display(hours, minutes, seconds);
-    delay(50);
+      
+
+    // --- Handle User Input PUSH BUTTON (runs continuously) ---
+    if (get_btn() == 1) {
+      int value_to_set = switch_state & 0x3F;
+      int selector = (switch_state >> 8) & 0x3;
+            
+      if (selector == 1 && value_to_set < 60) {        
+        seconds = value_to_set;
+      } else if (selector == 2 && value_to_set < 60) { 
+        minutes = value_to_set;
+      } else if (selector == 3 && value_to_set < 24) { 
+        hours = value_to_set;
+      }   
+      set_timer_display(hours, minutes, seconds);
+      delay(100);
+    }
   }
 
-  // --- Program End ---
-  // This part runs only after the loop is broken by SW7.
-  // Clear displays and LEDs to indicate the program has ended.
   display_string("Program Ended.");
   set_timer_display(0,0,0);
 }
+
+
+
