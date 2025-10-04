@@ -4,7 +4,7 @@
 
 /*
  * labinit
- * sets up the timer to generate a timeout event every 100 ms
+ * sets up the hardware's timer to generate a timeout event every 100 ms
  */
 void labinit(void){
   // DTEK-V board clock frequency is 30 MHz = 30,000,000 Hz

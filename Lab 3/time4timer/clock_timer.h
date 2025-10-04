@@ -6,6 +6,6 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-void clock(void);
+void clock_timer(void);
 
 #endif /* CLOCK_H */

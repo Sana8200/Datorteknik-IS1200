@@ -10,7 +10,7 @@
 
 #include "hardware.h"
 #include "tests.h"
-#include "clock.h"
+#include "clock_timer.h"
 #include "lib.h"
 #include "timer.h"
 
@@ -25,18 +25,15 @@ void handle_interrupt(unsigned cause)
 
 
 
-
 /* Your code goes into main as well as any needed functions. */
 int main() {
 
-  // Call labinit()
   labinit();
 
-  // run_start_sequence();
+  run_start_sequence();
   set_leds(0);
 
   clock_timer();
-
 
 
   return 0;
