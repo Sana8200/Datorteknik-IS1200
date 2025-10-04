@@ -12,6 +12,7 @@
 #include "tests.h"
 #include "clock.h"
 #include "lib.h"
+#include "timer.h"
 
 
 int mytime = 0x5957;
@@ -23,10 +24,6 @@ void handle_interrupt(unsigned cause)
 {}
 
 
-/* Add your code here for initializing interrupts. */
-void labinit(void)
-{}
-
 
 
 /* Your code goes into main as well as any needed functions. */
@@ -35,22 +32,12 @@ int main() {
   // Call labinit()
   labinit();
 
-
-  /* ============================== Lab 3 part d ================================ */
   // run_start_sequence();
- 
+  set_leds(0);
 
-  /* ============================== Lab 3 part h ================================ */
-  clock();
-
+  clock_timer();
 
 
-  /* ============================== Lab 3 part e ================================ */
-  // set_display(0, 5);
-  
-
-  /* ============================== Lab 3 part f and g ================================ */
-  // sw_btn_test();
 
   return 0;
 }

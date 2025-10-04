@@ -13,6 +13,9 @@ void run_start_sequence(void);
 void switch_button_test(void);
 
 
+void run_start_sequence(void);
+
+
 // --- External Global Variables ---
 // These are DEFINED in labmain.c and declared here for access by other files.
 extern int mytime;
