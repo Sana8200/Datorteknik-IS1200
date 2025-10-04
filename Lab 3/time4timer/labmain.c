@@ -30,6 +30,7 @@ int main() {
 
   labinit();
 
+  set_timer_display(0, 0, 0);
   run_start_sequence();
   set_leds(0);
 
