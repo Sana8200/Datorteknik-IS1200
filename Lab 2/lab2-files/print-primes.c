@@ -37,7 +37,6 @@ for (int i = 3; i * i <= n; i += 2) {
 
 
 void print_number(int n){            // Column formatter function
-
   printf("%10d ", n);                // Print the number with a width of 10 characters
 
   static int col_count = 0;          // Static variable to keep track of the current column count
@@ -52,10 +51,8 @@ void print_number(int n){            // Column formatter function
 
 
 
-
-
 void print_primes(int n){                  
-    // The function to manage the whole process of finding and printing the functions in columns 
+    // This function manages the whole process of finding and printing the functions in columns 
 
     // Should print out all prime numbers less than 'n'
     // with the following formatting. Note that the number of columns is stated in the define COLUMNS

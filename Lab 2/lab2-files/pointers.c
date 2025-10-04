@@ -41,8 +41,6 @@ void copycodes(char* text, int* list, int* count){       // Pointer parameters, 
 }
 
 
-
-
 // fucntion work calls copycodes twice to copy two strings text1 and text2
 void work(){
   // Passing the address of counter using & operator, so that copycodes can update the original counter variable    
