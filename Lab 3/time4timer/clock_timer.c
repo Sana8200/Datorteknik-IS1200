@@ -67,9 +67,10 @@ void clock_timer(void){
       // This condition is only true for very brief moment every 100ms 
       if (*TIMER_STATUS & TIMER_STATUS_TO) { 
 
-        // A 100ms timeout event has occurred.
-        // Reset the hardware flag immediately.
-        *TIMER_STATUS = TIMER_STATUS_TO;
+        // A 100ms timeout event has occurred, Reset the hardware flag immediately.
+        // According to the timer documentation table 257, writing any value to the statue register will clear the TO bit 
+        *TIMER_STATUS = 0;
+        //*TIMER_STATUS = TIMER_STATUS_TO;
 
         // --- 10Hz Blink Logic ---
         // A brief pulse on LED0 to indicate a 100ms timeout
