@@ -16,4 +16,6 @@ extern void tick(int*);
 extern void delay(int);
 extern int nextprime(int);
 
+extern void enable_interrupt(void);
+
 #endif /* LIB_H */

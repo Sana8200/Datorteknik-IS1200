@@ -9,7 +9,9 @@
 /* --- Initialization --- */
 // Initializes the hardware peripherals, particularly the timer.
 // This function must be called once at the start of the program.
-void labinit(void);
+// void labinit(void);
+
+// void handle_interrupt(unsigned cause);
 
 /* --- Output Functions --- */
 // Sets the state of the 10 LEDs using a bitmask.

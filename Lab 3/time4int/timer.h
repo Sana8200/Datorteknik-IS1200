@@ -22,6 +22,7 @@
 #define TIMER_CTRL_START   0x4 // Bit 2: START (Write 1 to start)
 #define TIMER_CTRL_STOP    0x8 // Bit 3: STOP (Write 1 to stop)
 
+
 // --- Timer Status Register Bits (from Table 257) ---
 #define TIMER_STATUS_TO    0x1 // Bit 0: Timeout Flag
 #define TIMER_STATUS_RUN   0x2 // Bit 1: Timer is running
