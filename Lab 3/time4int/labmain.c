@@ -13,13 +13,12 @@
 #include "lib.h"
 #include "timer.h"
 
-#define LED_TICK  0x01
 
 int prime = 1234567;   
 int mytime = 0x5957;
 char textstring[] = "text, more text, and even more text!";
-
-static int timeoutcount = 0;
+int timeoutcount = 0;         // Global timeout counter variable 
+ 
 
 /** 
  * @brief Sets the time on the six 7-segment displays.
@@ -44,34 +43,76 @@ void set_timer_display(int hours, int minutes, int seconds) {
  */
 
 void handle_interrupt(unsigned cause) {
+
+
+  // Part (e): Acknowledge the interrupt by resetting the timer's timeout flag.
+  *TIMER_STATUS = 0;
+
+  set_leds(timeoutcount);
+
   // Initializing static variables
   // These variable initialized only one and keep their values between calls 
   // This alllows the clock to remember the timer from one interrupt to the next 
   static int hours = 0;
   static int minutes = 0;
-  static int seconds = 0;
+  static int seconds = 0; 
 
-  // Part (e): Acknowledge the interrupt by resetting the timer's timeout flag.
-  *TIMER_STATUS = 0;
-
+  
   // --- Clock Logic ---
   timeoutcount++;      // Incrementing the timeout counter 
 
   if(timeoutcount >= 10){         // If the timeout counter reached 10 (if 10 interrupts happend), start incrementing the time and applying the clock logic 
     timeoutcount = 0;
     seconds++;
-    if(seconds >=60) { seconds = 0; minutes++; }
-    if(minutes >= 60) { minutes = 0; hours++; }
-    if(hours >= 24) { hours = 0; }
+    if(seconds >=60) { 
+      seconds = 0; 
+      minutes++; 
+    }
+    if(minutes >= 60) { 
+      minutes = 0; 
+      hours++; 
+    }
+    if(hours >= 24) { 
+      hours = 0; 
+    }
 
     // Part (d): Update displays and call tick().
     // Part (f): calling the display and tick functions once every 10 interrupts, it means once per second 
     set_timer_display(hours, minutes, seconds);
     tick( &mytime );
-  }
-
-  
+  }  
 }
+
+
+
+
+/* Add your code here for initializing interrupts. */
+
+/**
+ * @brief Initializes hardware, including the timer for interrupt generation.
+ */
+void labinit(void) {
+
+    // Set the timer period for 100ms (3,000,000 cycles at 30MHz).
+    int period_value = 3000000;
+    *TIMER_PERIODL = period_value & 0xFFFF;
+    *TIMER_PERIODH = (period_value >> 16) & 0xFFFF;
+
+    // Clear the timer's status register.
+     *TIMER_STATUS = 0;
+
+
+    // Part h assingment 3 
+    /* ---- Enabling the timer to generate the interrupts by configuring the control registers bits ---- */
+    // TIMER enable interrupts is controled by 0x1 bit,   
+    // Timer Control Register value = 0x2 OR 0x4 OR 0x1 = 0111 = 0x7 
+    *TIMER_CTRL = TIMER_CTRL_CONT | TIMER_CTRL_START | TIMER_CTRL_ITO;
+
+    // Part h assignment 3 
+    /* ---- Inside enable_interrupt function enabled interrupts and allowing interrupts from the timer ---- */
+    enable_interrupt();   
+}
+
 
 
 
@@ -79,14 +120,13 @@ void handle_interrupt(unsigned cause) {
 int main() {
 
   labinit();
-  
+
   while(1){
     print("Prime: ");
     prime = nextprime( prime );
     print_dec( prime );
     print("\n");
   }
-  return 0;
 }
 
 
