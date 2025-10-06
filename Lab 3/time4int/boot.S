@@ -4,7 +4,7 @@ welcome_msg: .asciz "================================================\n===== RIS
 	
 .section .text
 .align 2
-.globl _start
+.globl _start, enable_interrupt
 	
 _isr_handler:
 	j _isr_routine	   /* ISR service routine here */
@@ -125,3 +125,25 @@ _start:
 	jal main
 	
 loop:	j loop
+
+
+
+
+# =============================================================================
+# enable_interrupt
+# This function enables global machine-level interrupts and specifically 
+# enables the machine timer interrupt. It is called from C code.
+# =============================================================================
+
+
+enable_interrupt:
+    # Set the MIE (Machine Interrupt Enable) bit in the mstatus register.
+    # The bitmask for MIE is 0x8 (bit 3).
+    csrs mstatus, 8
+
+    # Set the MTIE (Machine Timer Interrupt Enable) bit in the mie register.
+    # The bitmask for MTIE is (128, or bit 7), but it didn't work, and bit 4 worked as the program should work.
+    csrs mie, 16
+    
+    ret # Return from function call
+        
