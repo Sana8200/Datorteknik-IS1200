@@ -1,13 +1,4 @@
-
 #include "hardware.h"
-
-// Hardware memory addresses
-// define, preprocessor directive, macro 
-#define LED_BASE_ADDR           0x04000000
-#define SWITCH_BASE_ADDR        0x04000010
-#define SEV_SEG_DISPLAY_BASE_ADDR 0x04000050
-#define PUSH_BUTTON_BASE_ADDR   0x040000d0
-
 
 /*
  * set_leds(int led_mask)
@@ -83,10 +74,5 @@ void sevenSegDisplay(void){
     *segm7 = 0x19;  
 }
 */
-
-
-
-
-
 
 
