@@ -57,6 +57,9 @@ _isr_routine:
 	addi t1, zero, 11
 	beq t0, t1, skip_init_args
 	csrr a0, mepc
+
+
+
 skip_init_args:
 	jal handle_exception	
 	// Read the mepc
@@ -68,11 +71,15 @@ skip_init_args:
 	// Jump to the place where we go back to where we were interrupted
 	j restore
 
+
+
 external_irq:
 	li t0, 0x7fffffff
 	csrr t1, mcause
 	and a0, t0, t1
 	jal handle_interrupt
+
+
 
 restore:
 	/* Restore registers from the stack */
@@ -139,11 +146,13 @@ loop:	j loop
 enable_interrupt:
     # Set the MIE (Machine Interrupt Enable) bit in the mstatus register.
     # The bitmask for MIE is 0x8 (bit 3).
-    csrs mstatus, 8
+    csrsi mstatus, 3
 
     # Set the MTIE (Machine Timer Interrupt Enable) bit in the mie register.
-    # The bitmask for MTIE is (128, or bit 7), but it didn't work, and bit 4 worked as the program should work.
-    csrs mie, 16
+    csrs mie, 16      # Machine timer interrupt enable bit is 16 
+	csrsi mie, 17      # Machine switch interrupt enable bit is 17 
+
+	# csrsi and csrs are identical        
     
     ret # Return from function call
         
