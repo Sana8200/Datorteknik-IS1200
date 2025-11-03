@@ -1,6 +1,6 @@
 ## IS1200 Laboratory Exercises
 
-This repository contains my solutions for the IS1200 laboratery exercises at KTH.  
+This repository contains my solutions for the IS1200 laboratery.
 The labs give hands-on experience with assembly, C programming, I/O, and processor design.  
 
 ## Labs
